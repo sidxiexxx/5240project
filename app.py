@@ -26,7 +26,6 @@ labels = ["product quality", "delivery", "customer service", "price"]
 def analyze_review(review):
     # Sentiment
     sentiment_result = sentiment_pipeline(review)[0]
-    sentiment_result = pipe(review)[0]
     label_map = {
     "LABEL_0": "Negative",
     "LABEL_1": "Positive",
