@@ -25,15 +25,20 @@ labels = ["product quality", "delivery", "customer service", "price"]
 # -----------------------------
 def analyze_review(review):
     # Sentiment
-    sentiment_result = sentiment_pipeline(review)[0]
+    sentiment_result = sentiment_pipeline(review)[0]  
+
+# 标签映射
     label_map = {
-    "LABEL_0": "Negative",
-    "LABEL_1": "Positive",
-    "NEGATIVE": "Negative",
-    "POSITIVE": "Positive"
+        "LABEL_0": "Negative",
+        "LABEL_1": "Positive",
+        "NEGATIVE": "Negative",
+        "POSITIVE": "Positive"
     }
+
     sentiment = label_map.get(sentiment_result['label'], sentiment_result['label'])
     confidence = round(sentiment_result['score'], 2)
+
+
     # Topic (Zero-shot)
     topic_result = zero_shot_pipeline(review, labels)
     topic = topic_result['labels'][0]
