@@ -117,18 +117,12 @@ if uploaded_file:
             for review in df['review']:
                 try:
                     res = analyze_review(str(review))
-                    top = extract_topics_excel(review, candidate_labels)
                     results.append(res)
-                    results.append(top)
-                    combined = {**res, **top}
-
-                    results.append(combined)
                 except Exception as e:
                     results.append({
                     "review": review,
                     "sentiment": "Error",
                     "confidence": 0,
-                    "topic": "Error"
                 })
                     
             result_df = pd.DataFrame(results)
