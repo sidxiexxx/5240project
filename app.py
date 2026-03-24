@@ -18,8 +18,6 @@ def load_zero_shot():
 sentiment_pipeline = load_sentiment_model()
 zero_shot_pipeline = load_zero_shot()
 
-labels = ["product quality", "delivery", "customer service", "price"]
-
 # -----------------------------
 # Helper Functions
 # -----------------------------
