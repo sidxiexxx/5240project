@@ -38,30 +38,56 @@ def analyze_review(review):
     sentiment = label_map.get(best['label'], best['label'])
     confidence = round(best['score'], 2)
 
-
-    # Topic (Zero-shot)
-    topic_result = zero_shot_pipeline(review, labels)
-    topic = topic_result['labels'][0]
-
     return {
         "review": review,
         "sentiment": sentiment,
         "confidence": confidence,
-        "topic": topic
     }
 
+def extract_topics(review, candidate_labels):
+    result = zero_shot_pipeline(review, candidate_labels)
+
+    # 所有label + score
+    topics = []
+    for label, score in zip(result["labels"], result["scores"]):
+        topics.append({
+            "keyword": label,
+            "score": round(score, 3)
+        })
+
+    return topics
+
+def extract_topics_dict(review, candidate_labels):
+    result = zero_shot_pipeline(review, candidate_labels)
+
+    return {
+        label: round(score, 3)
+        for label, score in zip(result["labels"], result["scores"])
+    }
 # -----------------------------
 # Streamlit UI
 # -----------------------------
 st.title("🛒 E-commerce Customer Feedback Intelligence System")
 
+# 转成 list
+candidate_labels = [x.strip() for x in user_input.split(",")]
+
 # -------- Function 1: Text Input --------
 st.header("Function 1: Single Review Analysis")
 review_input = st.text_area("Enter a customer review:")
+st.subheader("Custom Keywords")
+
+user_input = st.text_input(
+    "Enter keywords (comma separated):",
+    "product quality, delivery, customer service, price"
+)
 
 if st.button("Analyze Review"):
     result = analyze_review(review_input)
+    topics = extract_topics(review_input, candidate_labels)
     st.json(result)
+    st.write("### Topics & Scores")
+    st.json(topics)
 
 
 # -------- Function 2: File Upload --------
