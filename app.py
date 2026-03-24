@@ -57,9 +57,11 @@ review_input = st.text_area("Enter a customer review:")
 if st.button("Analyze Review"):
     if review_input.strip() != "":
         result = analyze_review(review_input)
-        st.json(result)
+            st.write("sentiment:", sentiment)
+            st.write("confidence:", confidence)
+            st.write("topic:", topic)
     else:
-        st.warning("Please enter a review.")
+            st.warning("Please enter a review.")
 
 # -------- Function 2: File Upload --------
 st.header("Function 2: Batch Analysis (Upload Excel)")
