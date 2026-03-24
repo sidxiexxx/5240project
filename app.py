@@ -1,22 +1,107 @@
 import streamlit as st
-from transformers import pipeline
+import pandas as pd
+import torch
+from transformers import pipeline, AutoTokenizer, AutoModelForSequenceClassification
 
+# -----------------------------
+# Load Models
+# -----------------------------
+@st.cache_resource
+def load_sentiment_model():
+    model_name = "distilbert-base-uncased-finetuned-sst-2-english"  # replace with your fine-tuned model
+    return pipeline("text-classification", model=model_name, return_all_scores=True)
 
-# Start measuring runtime
-start_time = time.perf_counter()
+@st.cache_resource
+def load_zero_shot():
+    return pipeline("zero-shot-classification", model="facebook/bart-large-mnli")
 
-#===========
-testing_pipe1 = pipeline(    "zero-shot-classification",
-    model="facebook/bart-large-mnli")
-review = """
-This store is great; they delivered what I needed very quickly, and the products were just as good as advertised.
-"""
+sentiment_pipeline = load_sentiment_model()
+zero_shot_pipeline = load_zero_shot()
 
 labels = ["product quality", "delivery", "customer service", "price"]
 
-result = testing_pipe1(review, candidate_labels=labels)
-print(result['labels'],result['scores'])
-#===========
-# Stop measuring runtime
-run_time = time.perf_counter() - start_time
-print(f"Runtime: {run_time:.4f} seconds")
+# -----------------------------
+# Helper Functions
+# -----------------------------
+def analyze_review(review):
+    # Sentiment
+    sentiment_result = sentiment_pipeline(review)[0]
+    sentiment_result = pipe(review)[0]
+    label_map = {
+    "LABEL_0": "Negative",
+    "LABEL_1": "Positive",
+    "NEGATIVE": "Negative",
+    "POSITIVE": "Positive"
+    }
+    sentiment = label_map.get(sentiment_result['label'], sentiment_result['label'])
+    confidence = round(sentiment_result['score'], 2)
+    # Topic (Zero-shot)
+    topic_result = zero_shot_pipeline(review, labels)
+    topic = topic_result['labels'][0]
+
+    return {
+        "review": review,
+        "sentiment": sentiment,
+        "confidence": confidence,
+        "topic": topic
+    }
+
+# -----------------------------
+# Streamlit UI
+# -----------------------------
+st.title("🛒 E-commerce Customer Feedback Intelligence System")
+
+# -------- Function 1: Text Input --------
+st.header("Function 1: Single Review Analysis")
+review_input = st.text_area("Enter a customer review:")
+
+if st.button("Analyze Review"):
+    if review_input.strip() != "":
+        result = analyze_review(review_input)
+        st.json(result)
+    else:
+        st.warning("Please enter a review.")
+
+# -------- Function 2: File Upload --------
+st.header("Function 2: Batch Analysis (Upload Excel)")
+uploaded_file = st.file_uploader("Upload Excel file with a 'review' column", type=["xlsx"])
+
+if uploaded_file:
+    df = pd.read_excel(uploaded_file)
+
+    if 'review' not in df.columns:
+        st.error("Excel must contain a 'review' column")
+    else:
+        st.write("Preview:", df.head())
+
+        if st.button("Run Batch Analysis"):
+            results = []
+
+            for review in df['review']:
+                try:
+                    res = analyze_review(str(review))
+                    results.append(res)
+                except Exception as e:
+                    results.append({
+                        "review": review,
+                        "sentiment": "Error",
+                        "confidence": 0,
+                        "topic": "Error"
+                    })
+
+            result_df = pd.DataFrame(results)
+
+            st.success("Analysis Complete!")
+            st.dataframe(result_df)
+
+            # Download button
+            output_file = "analysis_results.xlsx"
+            result_df.to_excel(output_file, index=False)
+
+            with open(output_file, "rb") as f:
+                st.download_button(
+                    label="Download Results",
+                    data=f,
+                    file_name=output_file,
+                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                )
