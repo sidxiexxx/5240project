@@ -105,8 +105,6 @@ st.header("Function 2: Batch Analysis (Upload Excel)")
 
 uploaded_file = st.file_uploader("Upload Excel file with a 'review' column", type=["xlsx"])
 
-candidate_labels = [x.strip() for x in user_input.split(",")]
-
 if uploaded_file:
     df = pd.read_excel(uploaded_file)
 
