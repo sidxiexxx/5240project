@@ -125,6 +125,13 @@ if uploaded_file:
                     combined = {**res, **top}
 
                     results.append(combined)
+                except Exception as e:
+                    results.append({
+                    "review": review,
+                    "sentiment": "Error",
+                    "confidence": 0,
+                    "topic": "Error"
+                })
                     
             result_df = pd.DataFrame(results)
 
