@@ -69,9 +69,6 @@ def extract_topics_dict(review, candidate_labels):
 # -----------------------------
 st.title("🛒 E-commerce Customer Feedback Intelligence System")
 
-# 转成 list
-candidate_labels = [x.strip() for x in user_input.split(",")]
-
 # -------- Function 1: Text Input --------
 st.header("Function 1: Single Review Analysis")
 review_input = st.text_area("Enter a customer review:")
@@ -81,6 +78,7 @@ user_input = st.text_input(
     "Enter keywords (comma separated):",
     "product quality, delivery, customer service, price"
 )
+candidate_labels = [x.strip() for x in user_input.split(",")]
 
 if st.button("Analyze Review"):
     result = analyze_review(review_input)
