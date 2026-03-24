@@ -63,15 +63,7 @@ def extract_topics_excel(review, candidate_labels):
         for label, score in zip(topic_result["labels"], topic_result["scores"])
     }
 
-    output = {
-        "review": review,
-        "sentiment": sentiment,
-        "confidence": confidence
-    }
-
-    output.update(topic_dict)
-
-    return output
+    return topic_dict
 
 # -----------------------------
 # Streamlit UI
@@ -118,11 +110,15 @@ if uploaded_file:
                 try:
                     res = analyze_review(str(review))
                     results.append(res)
+                    top = extract_topics_excel(review, candidate_labels)
+                    combined = {**res, **top}
+                    results.append(combined)
                 except Exception as e:
                     results.append({
                     "review": review,
                     "sentiment": "Error",
                     "confidence": 0,
+                    "topic": "Error"  
                 })
                     
             result_df = pd.DataFrame(results)
