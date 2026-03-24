@@ -57,13 +57,24 @@ def extract_topics(review, candidate_labels):
 
     return topics
 
-def extract_topics_dict(review, candidate_labels):
-    result = zero_shot_pipeline(review, candidate_labels)
+def extract_topics_excel(review, candidate_labels):
+    topic_result = zero_shot_pipeline(review, candidate_labels)
 
-    return {
+    topic_dict = {
         label: round(score, 3)
-        for label, score in zip(result["labels"], result["scores"])
+        for label, score in zip(topic_result["labels"], topic_result["scores"])
     }
+
+    output = {
+        "review": review,
+        "sentiment": sentiment,
+        "confidence": confidence
+    }
+
+    output.update(topic_dict)
+
+    return output
+
 # -----------------------------
 # Streamlit UI
 # -----------------------------
@@ -90,7 +101,17 @@ if st.button("Analyze Review"):
 
 # -------- Function 2: File Upload --------
 st.header("Function 2: Batch Analysis (Upload Excel)")
+
 uploaded_file = st.file_uploader("Upload Excel file with a 'review' column", type=["xlsx"])
+
+st.subheader("Custom Keywords for Topic Analysis")
+
+user_input = st.text_input(
+    "Enter keywords (comma separated):",
+    "product quality, delivery, customer service, price"
+)
+
+candidate_labels = [x.strip() for x in user_input.split(",")]
 
 if uploaded_file:
     df = pd.read_excel(uploaded_file)
@@ -106,7 +127,9 @@ if uploaded_file:
             for review in df['review']:
                 try:
                     res = analyze_review(str(review))
+                    top = extract_topics_excel(review, candidate_labels)
                     results.append(res)
+                    results.append(top)
                 except Exception as e:
                     results.append({
                         "review": review,
