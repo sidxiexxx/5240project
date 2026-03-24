@@ -60,13 +60,11 @@ st.header("Function 1: Single Review Analysis")
 review_input = st.text_area("Enter a customer review:")
 
 if st.button("Analyze Review"):
-    if review_input.strip() != "":
-        result = analyze_review(review_input)
-        st.write("sentiment:", sentiment)
-        st.write("confidence:", confidence)
-        st.write("topic:", topic)
-    else:
-        st.warning("Please enter a review.")
+    result = analyze_review(review_input)
+    st.write("sentiment:", sentiment)
+    st.write("confidence:", confidence)
+    st.write("topic:", topic)
+
 
 # -------- Function 2: File Upload --------
 st.header("Function 2: Batch Analysis (Upload Excel)")
