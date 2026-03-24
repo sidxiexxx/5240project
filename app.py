@@ -80,9 +80,6 @@ def extract_topics_excel(review, candidate_labels):
 # -----------------------------
 st.title("🛒 E-commerce Customer Feedback Intelligence System")
 
-# -------- Function 1: Text Input --------
-st.header("Function 1: Single Review Analysis")
-review_input = st.text_area("Enter a customer review:")
 st.subheader("Custom Keywords")
 
 user_input = st.text_input(
@@ -90,6 +87,10 @@ user_input = st.text_input(
     "product quality, delivery, customer service, price"
 )
 candidate_labels = [x.strip() for x in user_input.split(",")]
+
+# -------- Function 1: Text Input --------
+st.header("Function 1: Single Review Analysis")
+review_input = st.text_area("Enter a customer review:")
 
 if st.button("Analyze Review"):
     result = analyze_review(review_input)
@@ -103,13 +104,6 @@ if st.button("Analyze Review"):
 st.header("Function 2: Batch Analysis (Upload Excel)")
 
 uploaded_file = st.file_uploader("Upload Excel file with a 'review' column", type=["xlsx"])
-
-st.subheader("Custom Keywords for Topic Analysis")
-
-user_input = st.text_input(
-    "Enter keywords (comma separated):",
-    "product quality, delivery, customer service, price"
-)
 
 candidate_labels = [x.strip() for x in user_input.split(",")]
 
