@@ -8,7 +8,7 @@ from transformers import pipeline, AutoTokenizer, AutoModelForSequenceClassifica
 # -----------------------------
 @st.cache_resource
 def load_sentiment_model():
-    model_name = "distilbert-base-uncased-finetuned-sst-2-english"  # replace with your fine-tuned model
+    model_name = "sidxxxzzx/isom5240proj_amazon"  
     return pipeline("text-classification", model=model_name, return_all_scores=True)
 
 @st.cache_resource
