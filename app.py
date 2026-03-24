@@ -70,7 +70,7 @@ def extract_topics_excel(review, candidate_labels):
 # -----------------------------
 st.title("🛒 E-commerce Customer Feedback Intelligence System")
 
-st.subheader("Custom Keywords")
+st.subheader("💬 Custom Keywords")
 
 user_input = st.text_input(
     "Enter keywords (comma separated):",
