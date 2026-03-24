@@ -61,9 +61,7 @@ review_input = st.text_area("Enter a customer review:")
 
 if st.button("Analyze Review"):
     result = analyze_review(review_input)
-    st.write("sentiment:", sentiment)
-    st.write("confidence:", confidence)
-    st.write("topic:", topic)
+    st.json(result)
 
 
 # -------- Function 2: File Upload --------
