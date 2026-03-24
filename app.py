@@ -122,14 +122,10 @@ if uploaded_file:
                     top = extract_topics_excel(review, candidate_labels)
                     results.append(res)
                     results.append(top)
-                except Exception as e:
-                    results.append({
-                        "review": review,
-                        "sentiment": "Error",
-                        "confidence": 0,
-                        "topic": "Error"
-                    })
+                    combined = {**res, **top}
 
+                    results.append(combined)
+                    
             result_df = pd.DataFrame(results)
 
             st.success("Analysis Complete!")
